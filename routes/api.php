@@ -23,6 +23,12 @@ Route::post('register', 'API\UserController@register');
 Route::group(['middleware' => 'auth:api'], function(){
     Route::get('test', 'API\UserController@test');
     Route::post('transfer', 'API\UserController@transfer');
-    Route::get('details', 'API\UserController@details');
     Route::get('logout', 'API\UserController@logout');
+    
+    Route::get('details', [
+        'as' => 'details',
+        'uses' => 'API\UserController@details',
+        'needs' => 'ACCESS.READ',
+        'middleware' => 'guard'
+    ]);
 });

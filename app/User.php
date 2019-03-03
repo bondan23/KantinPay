@@ -7,10 +7,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
+use Szykra\Guard\Contracts\Permissible;
+use Szykra\Guard\Traits\Permissions;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Permissible
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, Permissions;
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'role_id',
     ];
 
     /**
@@ -27,7 +29,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'role', 'role_id'
     ];
 
     /**
@@ -38,6 +40,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role(){
+        return $this->belongsTo('Szykra\Guard\Models\Role');
+    }
 
     public function transactions(){
         return $this->belongsToMany('App\Transaction', 'transaction_pivot', 'user_id', 'tx_id')

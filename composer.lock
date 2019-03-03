@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fdeff1663f8582b04d1254a34031517d",
+    "content-hash": "927914bc2cd0a5360f705fb459d0162c",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -3195,6 +3195,53 @@
             "time": "2019-01-30T11:44:30+00:00"
         },
         {
+            "name": "szykra/laravel-guard",
+            "version": "dev-custom",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bondan23/laravel-guard.git",
+                "reference": "48db3be6d104aa422fedf4ce976d2d08d7fae7a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bondan23/laravel-guard/zipball/48db3be6d104aa422fedf4ce976d2d08d7fae7a5",
+                "reference": "48db3be6d104aa422fedf4ce976d2d08d7fae7a5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "~5.0",
+                "illuminate/database": "~5.0",
+                "illuminate/support": "~5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Szykra\\Guard\\": "src/Szykra/Guard/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Szymon Krajewski",
+                    "email": "szykra@gmail.com"
+                }
+            ],
+            "description": "Simple and easy to use roles and permissions system (ACL) for Laravel 5.",
+            "keywords": [
+                "acl",
+                "laravel",
+                "permissions",
+                "roles",
+                "route"
+            ],
+            "support": {
+                "source": "https://github.com/bondan23/laravel-guard/tree/custom"
+            },
+            "time": "2019-03-03T19:20:54+00:00"
+        },
+        {
             "name": "tijsverkoyen/css-to-inline-styles",
             "version": "2.2.1",
             "source": {
@@ -5123,7 +5170,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "szykra/laravel-guard": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

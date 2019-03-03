@@ -18,13 +18,8 @@ class UserController extends Controller
         $input = $request->all(); 
         $to = $input["to_id"];
         $amount = $input["amount"];
-        $type = $input["tx_type_id"];
 
-        if($type != 2){
-            return response()->json(['messages'=>'Failed transfer'], 200); 
-        }
-
-        $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => $type]);
+        $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => 2]);
         $user->transactions()->attach($transaction, ['to_id' => $to]);
 
         return response()->json(['message'=>'Success transfer','to_id'=>$to,'amount'=>$amount], 200); 
@@ -98,6 +93,7 @@ class UserController extends Controller
     public function details() 
     { 
         $user = Auth::user(); 
+        
         return response()->json(['success' => $user], $this-> successStatus); 
     } 
 
