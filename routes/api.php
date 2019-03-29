@@ -21,9 +21,16 @@ Route::post('register', 'API\UserController@register');
 // });
 
 Route::group(['middleware' => 'auth:api'], function(){
-    Route::get('test', 'API\UserController@test');
+    Route::get('history', 'API\UserController@history');
     Route::post('transfer', 'API\UserController@transfer');
     Route::get('logout', 'API\UserController@logout');
+
+    Route::post('topup', [
+        'as' => 'details',
+        'uses' => 'API\UserController@topup',
+        'needs' => 'TOPUP.CREATE',
+        'middleware' => 'guard'
+    ]);
     
     Route::get('details', [
         'as' => 'details',

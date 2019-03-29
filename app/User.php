@@ -50,9 +50,14 @@ class User extends Authenticatable implements Permissible
         ->withTimestamps();
     }
 
+    public function balance()
+    {
+        return $this->hasOne('App\Balance');
+    }
+
     public function history(){
         return DB::table('users')
-        ->select('users.name', 'transaction_pivot.user_id','transaction_pivot.to_id','transactions.amount', 'transaction_type.type')
+        ->select('users.name', 'transaction_pivot.user_id','transaction_pivot.to_id','transactions.amount', 'transaction_type.type', 'transaction_pivot.created_at', 'transaction_pivot.updated_at')
         ->selectSub(function ($query) {
             $query->selectRaw('(select name from users where id = transaction_pivot.to_id)');
         }, 'receiver')

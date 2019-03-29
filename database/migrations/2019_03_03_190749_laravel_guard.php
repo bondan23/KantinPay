@@ -49,14 +49,14 @@ class LaravelGuard extends Migration
      */
     public function down()
     {
-        // Schema::table('users', function(Blueprint $table){
-        //     $table->dropForeign('users_role_id_foreign');
+        Schema::table('users', function(Blueprint $table){
+            $table->dropForeign('users_role_id_foreign');
 
-        //     $table->dropColumn('role_id');
-        // });
+            $table->dropColumn('role_id');
+        });
 
-        // Schema::dropIfExists('permission_role');
-        // Schema::dropIfExists('roles');
-        // Schema::dropIfExists('permissions');
+        Schema::dropIfExists('permission_role');
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permissions');
     }
 }

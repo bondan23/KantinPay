@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller; 
 use App\User; 
 use App\Transaction;
+use App\Balance;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 
@@ -13,16 +14,45 @@ class UserController extends Controller
     public $successStatus = 200;
 
     public function transfer(Request $request){
-        $user = Auth::user();
+        $sender = Auth::user();
 
         $input = $request->all(); 
         $to = $input["to_id"];
         $amount = $input["amount"];
 
+        if($amount > $sender->balance->balance) {
+            return response()->json(['message'=>'Failed transfer, insufficient balance.'], 200); 
+        }
+
         $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => 2]);
-        $user->transactions()->attach($transaction, ['to_id' => $to]);
+        $sender->transactions()->attach($transaction, ['to_id' => $to]);
+        
+        // Update Sender Balance
+        $sender->balance()->decrement('balance', $amount);
+
+        // Update Recipient Balance
+        User::find($to)->balance()->increment('balance', $amount);
 
         return response()->json(['message'=>'Success transfer','to_id'=>$to,'amount'=>$amount], 200); 
+    }
+
+    public function topup(Request $request){
+        $to = Auth::id();
+        $user = User::find($to);
+
+        $input = $request->all(); 
+        $amount = $input["amount"];
+
+        $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => 1]);
+        $user->transactions()->attach($transaction, ['to_id' => $to]);
+        $user->balance()->increment('balance', $amount);
+
+        $data = [
+            'to_id'=>$to,
+            'amount'=>$amount
+        ];
+
+        return response()->json(['message'=>'Success Top up','data'=> $data], 200); 
     }
 
     /** 
@@ -30,16 +60,15 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function test(){ 
+    public function history(){ 
         $user = Auth::user();
-        $test = $user->history();
-        print($test);
+        $history = $user->history();
 
         // $trans = Transaction::find(1);
         // print($trans->amount);
         // print($trans->transactionTypes->type);
 
-        // return response()->json(['message'=>'HELLO WORLD'], 200); 
+        return response()->json(['message'=>'Success get history', 'data'=> $history], 200); 
     }
 
     /** 
@@ -51,7 +80,7 @@ class UserController extends Controller
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             $user = Auth::user(); 
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
-            return response()->json(['success' => $success], $this-> successStatus); 
+            return response()->json(['success' => 'Success login', 'data'=> $success], $this-> successStatus); 
         } 
         else{ 
             return response()->json(['error'=>'Unauthorised'], 401); 
@@ -78,11 +107,16 @@ class UserController extends Controller
 
         $input = $request->all(); 
         $input['password'] = bcrypt($input['password']); 
+        $input['role_id'] = 2;
         $user = User::create($input); 
-        $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+        $success['token'] =  $user->createToken('MyApp')->accessToken; 
         $success['name'] =  $user->name;
 
-        return response()->json(['success'=>$success], $this-> successStatus); 
+        $balance['user_id'] = $user->id;
+        $balance['balance'] = 0;
+        Balance::create($balance);
+
+        return response()->json(['success'=>'Success Register', 'data' => $success], $this->successStatus); 
     }
 
     /** 
@@ -92,9 +126,13 @@ class UserController extends Controller
      */ 
     public function details() 
     { 
-        $user = Auth::user(); 
-        
-        return response()->json(['success' => $user], $this-> successStatus); 
+        $user = User::with('balance')->find(Auth::id());
+        $data['id'] = $user->id;
+        $data['name'] = $user->name;
+        $data['email'] = $user->email;
+        $data['balance'] = $user->balance->balance;
+
+        return response()->json(['success' => 'Success get details', 'data' => $data], $this->successStatus); 
     } 
 
     public function logout(Request $request)
