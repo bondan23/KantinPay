@@ -68,6 +68,7 @@ class User extends Authenticatable implements Permissible
             $where->where('transaction_pivot.user_id', '=', $this->id)
                 ->orWhere('transaction_pivot.to_id', '=', $this->id);
         })
+        ->orderBy('created_at', 'DESC')
         ->get();
     }
 }

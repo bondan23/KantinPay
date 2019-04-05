@@ -21,7 +21,7 @@ class UserController extends Controller
         $amount = $input["amount"];
 
         if($amount > $sender->balance->balance) {
-            return response()->json(['message'=>'Failed transfer, insufficient balance.'], 200); 
+            return response()->json(['message'=>'Failed transfer, insufficient balance.'], 400); 
         }
 
         $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => 2]);
@@ -37,12 +37,13 @@ class UserController extends Controller
     }
 
     public function topup(Request $request){
-        $to = Auth::id();
+        $to = $request->input('to_id');
         $user = User::find($to);
 
         $input = $request->all(); 
         $amount = $input["amount"];
-
+        
+        // TOPUP RESULT user_id and to_id will be the same
         $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => 1]);
         $user->transactions()->attach($transaction, ['to_id' => $to]);
         $user->balance()->increment('balance', $amount);
@@ -102,7 +103,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-                    return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error'=>$validator->errors()], 401);            
         }
 
         $input = $request->all(); 
@@ -124,9 +125,10 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function details() 
+    public function details(Request $request) 
     { 
-        $user = User::with('balance')->find(Auth::id());
+        $id = $request->id ? $request->id : Auth::id();
+        $user = User::with('balance')->findOrFail($id);
         $data['id'] = $user->id;
         $data['name'] = $user->name;
         $data['email'] = $user->email;
