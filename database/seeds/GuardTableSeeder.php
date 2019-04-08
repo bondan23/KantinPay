@@ -17,7 +17,8 @@ class GuardTableSeeder extends Seeder
             ['tag' => 'ACCESS.CREATE', 'name' => 'Create access', 'description' => 'Ability to create'],
             ['tag' => 'ACCESS.READ', 'name' => 'Read access', 'description' => 'Ability to read'],
             ['tag' => 'ACCESS.UPDATE', 'name' => 'Update access', 'description' => 'Ability to update'],
-            ['tag' => 'ACCESS.DELETE', 'name' => 'Delete access', 'description' => 'Ability to delete']
+            ['tag' => 'ACCESS.DELETE', 'name' => 'Delete access', 'description' => 'Ability to delete'],
+            ['tag' => 'TOPUP.CREATE', 'name' => 'Topup access', 'description' => 'Ability to topup'],
         ];
 
         $permModels = [];
