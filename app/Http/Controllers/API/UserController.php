@@ -37,9 +37,11 @@ class UserController extends Controller
     }
 
     public function topup(Request $request){
-        $to = $request->input('to_id');
-        $user = User::find($to);
-
+        // $to = $request->input('to_id');
+        $email = $request->input('to_email');
+        $user = User::where('email', $email)->first();
+        $to = $user->id;
+        
         $input = $request->all(); 
         $amount = $input["amount"];
         
@@ -127,8 +129,8 @@ class UserController extends Controller
      */ 
     public function details(Request $request) 
     { 
-        $id = $request->id ? $request->id : Auth::id();
-        $user = User::with('balance')->findOrFail($id);
+        $email = $request->email ? $request->email : Auth::user()->email;
+        $user = User::where('email',$email)->with('balance')->first();
         $data['id'] = $user->id;
         $data['name'] = $user->name;
         $data['email'] = $user->email;
