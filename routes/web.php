@@ -19,3 +19,9 @@ Route::get('/login','Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login','Auth\LoginController@login');
 Route::get('/logout','Auth\LoginController@logout');
 Route::get('/home','HomeViewController@index');
+
+Route::get('/action_topup/{type}/{id}', [
+    'as' => 'action_topup',
+    'uses' => 'HomeViewController@action_topup',
+    'needs' => 'ACCESS.UPDATE|ACCESS.DELETE',
+]);

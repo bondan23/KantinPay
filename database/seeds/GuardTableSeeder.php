@@ -10,7 +10,8 @@ class GuardTableSeeder extends Seeder
     {
         $roles = [
             'ADMIN'  => 'Administrator',
-            'USER' => 'User'
+            'USER' => 'User',
+            'SELLER' => 'Seller'
         ];
 
         $permissions = [
@@ -29,7 +30,8 @@ class GuardTableSeeder extends Seeder
 
         $rolesToPerm = [
             'ADMIN'  => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE', 'ACCESS.DELETE'],
-            'USER' => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE']
+            'USER' => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE'],
+            'SELLER' => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE'],
         ];
 
         foreach ($rolesToPerm as $tag => $permissions) {

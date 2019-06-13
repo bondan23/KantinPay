@@ -22,35 +22,33 @@
 
 <div class="container">
     <div class="row" style="margin-top:12px;">
-        <div class="col-sm-6">
+        <div class="col-sm-8">
+            <h2>Request Balance List</h2>
             <table class="table">
                 <thead>
                     <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Request Balance</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"> Action </th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($data as $key => $val)
                     <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                      <th scope="row">{{ $key + 1 }}</th>
+                      <td>{{ $val->users->name }}</td>
+                      <td>Rp. {{ number_format($val->request_balance ,0, '.', '.') }}</td>
+                      <td>{{ $val->confirmed ? "Confirmed" : "Waiting Approval"}}</td>
+                      <td>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                          <a href="{{ route('action_topup', ['type'=> 1, 'id' => $val->id]) }}" role="button" class="btn btn-success">Approve</a>
+                          <a href="{{ route('action_topup', ['type'=> 2, 'id' => $val->id]) }}" role="button" class="btn btn-danger">Decline</a>
+                        </div>
+                      </td>
                     </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    </tr>
-                    <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

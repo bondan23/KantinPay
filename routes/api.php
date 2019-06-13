@@ -26,9 +26,16 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('logout', 'API\UserController@logout');
 
     Route::post('topup', [
-        'as' => 'details',
+        'as' => 'topup',
         'uses' => 'API\UserController@topup',
         'needs' => 'TOPUP.CREATE',
+        'middleware' => 'guard'
+    ]);
+
+    Route::post('request_topup', [
+        'as' => 'request_topup',
+        'uses' => 'API\UserController@request_topup',
+        'needs' => 'ACCESS.CREATE',
         'middleware' => 'guard'
     ]);
     

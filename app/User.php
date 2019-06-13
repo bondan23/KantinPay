@@ -12,7 +12,7 @@ use Szykra\Guard\Traits\Permissions;
 
 class User extends Authenticatable implements Permissible
 {
-    use HasApiTokens, Notifiable, Permissions;
+    use Notifiable, Permissions;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +20,7 @@ class User extends Authenticatable implements Permissible
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role_id',
+        'name', 'email', 'password', 'role_id', 'api_token'
     ];
 
     /**
@@ -50,10 +50,13 @@ class User extends Authenticatable implements Permissible
         ->withTimestamps();
     }
 
-    public function balance()
-    {
+    public function balance(){
         return $this->hasOne('App\Balance');
     }
+
+    public function topup() {
+        return $this->hasMany('App\TopUp');
+    } 
 
     public function history(){
         return DB::table('users')

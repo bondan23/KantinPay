@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\User; 
 use App\Transaction;
 use App\Balance;
-use Illuminate\Support\Facades\Auth; 
+use App\TopUp;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Validator;
 
 class UserController extends Controller 
@@ -36,6 +38,17 @@ class UserController extends Controller
         return response()->json(['message'=>'Success transfer','to_id'=>$to,'amount'=>$amount], 200); 
     }
 
+    public function request_topup(Request $request){
+        $create = [
+            "request_balance" => 10000,
+            "user_id" => Auth::user()->id,
+            "confirmed" => false,
+        ];
+        $topup = TopUp::create($create);
+        $data["test"] = 10000;
+        return response()->json(['message'=>'Success Request Top up','data'=> $data], 200);
+    }
+    
     public function topup(Request $request){
         // $to = $request->input('to_id');
         $email = $request->input('to_email');
@@ -82,7 +95,7 @@ class UserController extends Controller
     public function login(){ 
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+            $success['token'] =  $user->api_token;
             return response()->json(['success' => 'Success login', 'data'=> $success], $this-> successStatus); 
         } 
         else{ 
@@ -110,9 +123,10 @@ class UserController extends Controller
 
         $input = $request->all(); 
         $input['password'] = bcrypt($input['password']); 
-        $input['role_id'] = 2;
+        $input['role_id'] = 2; // USER
+        $input['api_token'] = Str::random(60);
         $user = User::create($input); 
-        $success['token'] =  $user->createToken('MyApp')->accessToken; 
+        $success['token'] =  $user->api_token; 
         $success['name'] =  $user->name;
 
         $balance['user_id'] = $user->id;
@@ -141,9 +155,7 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
-        
-        return response()->json([
+       return response()->json([
             'message' => 'Successfully logged out'
         ]);
     }
