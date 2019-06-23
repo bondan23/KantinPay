@@ -58,6 +58,10 @@ class User extends Authenticatable implements Permissible
         return $this->hasMany('App\TopUp');
     } 
 
+    public function withdraw() {
+        return $this->hasMany('App\Withdraw');
+    } 
+
     public function history(){
         return DB::table('users')
         ->select('users.name', 'transaction_pivot.user_id','transaction_pivot.to_id', 'transactions.amount', 'transaction_type.type', 'transaction_pivot.created_at', 'transaction_pivot.updated_at')

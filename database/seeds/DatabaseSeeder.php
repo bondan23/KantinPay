@@ -25,6 +25,11 @@ class DatabaseSeeder extends Seeder
                 'type' => 'Transfer',
                 'created_at'=> date('Y-m-d H:i:s'),
                 'updated_at'=> date('Y-m-d H:i:s')
+            ),
+            array(
+                'type' => 'Withdraw',
+                'created_at'=> date('Y-m-d H:i:s'),
+                'updated_at'=> date('Y-m-d H:i:s')
             )
         );
         

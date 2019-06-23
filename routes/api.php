@@ -38,6 +38,13 @@ Route::group(['middleware' => 'auth:api'], function(){
         'needs' => 'ACCESS.CREATE',
         'middleware' => 'guard'
     ]);
+
+    Route::post('request_withdraw', [
+        'as' => 'request_withdraw',
+        'uses' => 'API\UserController@request_withdraw',
+        'needs' => 'ACCESS.UPDATE',
+        'middleware' => 'guard'
+    ]);
     
     Route::get('details', [
         'as' => 'details',

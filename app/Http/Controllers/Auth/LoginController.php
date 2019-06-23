@@ -44,6 +44,17 @@ class LoginController extends Controller
         return view('login.login');
     }
 
+    protected function authenticated(Request $request, $user)
+    {
+        if($user->role_id != 1){
+            $this->guard()->logout();
+            $request->session()->invalidate();
+            return redirect('/login')->withErrors(["You don't have right permission to login"]);;
+        }
+
+        return redirect()->intended($this->redirectPath());
+    }
+
     // public function login()
     // {
     //     return view('login.login');

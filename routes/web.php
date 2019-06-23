@@ -25,3 +25,9 @@ Route::get('/action_topup/{type}/{id}', [
     'uses' => 'HomeViewController@action_topup',
     'needs' => 'ACCESS.UPDATE|ACCESS.DELETE',
 ]);
+
+Route::get('/action_withdraw/{type}/{id}', [
+    'as' => 'action_withdraw',
+    'uses' => 'HomeViewController@action_withdraw',
+    'needs' => 'ACCESS.UPDATE|ACCESS.DELETE',
+]);

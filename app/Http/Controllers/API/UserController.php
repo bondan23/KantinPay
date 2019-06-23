@@ -7,6 +7,7 @@ use App\User;
 use App\Transaction;
 use App\Balance;
 use App\TopUp;
+use App\Withdraw;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Validator;
@@ -39,14 +40,39 @@ class UserController extends Controller
     }
 
     public function request_topup(Request $request){
+        $input = $request->all();
         $create = [
-            "request_balance" => 10000,
+            "request_balance" => $input['request_balance'],
             "user_id" => Auth::user()->id,
             "confirmed" => false,
         ];
         $topup = TopUp::create($create);
-        $data["test"] = 10000;
-        return response()->json(['message'=>'Success Request Top up','data'=> $data], 200);
+        $data["balance"] = $input['request_balance'];
+        return response()->json(['message'=>'Success Request Top Up','data'=> $data], 200);
+    }
+
+    public function request_withdraw(Request $request){
+        $input = $request->all();
+        $requestBalance = $input['request_balance'];
+
+        $user = Auth::user();
+        $userBalance = $user->balance();
+        $getBalance = $userBalance->first();
+        $currentBalance = $getBalance['balance'];
+
+        if($requestBalance > $currentBalance)  {
+            return response()->json(['message'=>'Cannot withdraw, insufficient fund.', 'success' => false], 400);
+        }
+
+        $create = [
+            "request_balance" => $requestBalance,
+            "user_id" => $user->id,
+            "confirmed" => false,
+        ];
+        $withdraw = Withdraw::create($create);
+        $data["balance"] = $requestBalance;
+
+        return response()->json(['message'=>'Success Request Withdraw','data'=> $data, 'success' => true], 200);
     }
     
     public function topup(Request $request){
@@ -123,7 +149,7 @@ class UserController extends Controller
 
         $input = $request->all(); 
         $input['password'] = bcrypt($input['password']); 
-        $input['role_id'] = 2; // USER
+        $input['role_id'] = $input['role_id'] || 2; // USER
         $input['api_token'] = Str::random(60);
         $user = User::create($input); 
         $success['token'] =  $user->api_token; 
@@ -149,6 +175,7 @@ class UserController extends Controller
         $data['name'] = $user->name;
         $data['email'] = $user->email;
         $data['balance'] = $user->balance->balance;
+        $data['role_id'] = $user->role_id;
 
         return response()->json(['success' => 'Success get details', 'data' => $data], $this->successStatus); 
     } 

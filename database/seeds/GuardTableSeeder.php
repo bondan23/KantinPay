@@ -29,7 +29,7 @@ class GuardTableSeeder extends Seeder
         }
 
         $rolesToPerm = [
-            'ADMIN'  => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE', 'ACCESS.DELETE'],
+            'ADMIN'  => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE', 'ACCESS.DELETE', 'TOPUP.CREATE'],
             'USER' => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE'],
             'SELLER' => ['ACCESS.CREATE', 'ACCESS.READ', 'ACCESS.UPDATE'],
         ];
