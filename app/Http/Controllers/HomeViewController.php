@@ -6,8 +6,10 @@ use App\TopUp;
 use App\Withdraw;
 use App\User;
 use App\Transaction;
+use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class HomeViewController extends Controller
 {
@@ -22,6 +24,49 @@ class HomeViewController extends Controller
         $withdraw = Withdraw::with('users')->where('confirmed',false)->get();
 
         return view('home.home', ["topup" => $topup, 'withdraw' => $withdraw]);
+    }
+
+    public function history(){
+        $user = Auth::user();
+        $history = $user->adminHistory();
+
+        return view('history.history', ["history" => $history]);
+    }
+
+    public function register(){
+        $user = Auth::user();
+        $history = $user->adminHistory();
+
+        return view('register.register');
+    }
+
+    public function list(){
+        $user = User::where('role_id', 1)->get();
+
+        return view('list.list',['data' => $user]);
+    }
+
+    public function registerPost(Request $request){
+        $validator = Validator::make($request->all(), [ 
+            'name' => 'required', 
+            'email' => 'required|email', 
+            'password' => 'required', 
+            'c_password' => 'required|same:password', 
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/register')->with('errors', $validator->errors()->all());
+        }
+
+        $input = $request->all(); 
+        $input['password'] = bcrypt($input['password']); 
+        $input['role_id'] = 1;
+        $input['api_token'] = Str::random(60);
+        $user = User::create($input); 
+        $success['token'] =  $user->api_token; 
+        $success['name'] =  $user->name;
+
+        return redirect('/register')->with('success', 'Success Register');
     }
 
     public function action_topup(Request $request, $type = 1, $id = null) {

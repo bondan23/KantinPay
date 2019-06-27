@@ -78,4 +78,17 @@ class User extends Authenticatable implements Permissible
         ->orderBy('created_at', 'DESC')
         ->get();
     }
+
+    public function adminHistory() {
+        return DB::table('users')
+        ->select('users.name', 'transaction_pivot.user_id','transaction_pivot.to_id', 'transactions.amount', 'transaction_type.type', 'transaction_pivot.created_at', 'transaction_pivot.updated_at')
+        ->selectSub(function ($query) {
+            $query->selectRaw('(select name from users where id = transaction_pivot.to_id)');
+        }, 'receiver')
+        ->join('transaction_pivot','transaction_pivot.user_id', '=', 'users.id')
+        ->join('transactions','transaction_pivot.tx_id', '=', 'transactions.id')
+        ->join('transaction_type','transactions.tx_type_id', '=', 'transaction_type.id')
+        ->orderBy('created_at', 'DESC')
+        ->simplePaginate(10);
+    }
 }

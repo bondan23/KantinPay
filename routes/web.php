@@ -19,6 +19,10 @@ Route::get('/login','Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login','Auth\LoginController@login');
 Route::get('/logout','Auth\LoginController@logout');
 Route::get('/home','HomeViewController@index');
+Route::get('/history','HomeViewController@history');
+Route::get('/register','HomeViewController@register');
+Route::post('/register','HomeViewController@registerPost');
+Route::get('/list','HomeViewController@list');
 
 Route::get('/action_topup/{type}/{id}', [
     'as' => 'action_topup',
