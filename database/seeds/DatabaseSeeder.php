@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(GuardTableSeeder::class);
+        $this->call(UserTableSeeder::class);
 
         DB::table('transaction_type')->delete();
         
