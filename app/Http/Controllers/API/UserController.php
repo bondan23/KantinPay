@@ -24,7 +24,7 @@ class UserController extends Controller
         $amount = $input["amount"];
 
         if($amount > $sender->balance->balance) {
-            return response()->json(['message'=>'Failed transfer, insufficient balance.'], 400); 
+            return response()->json(['message'=>'Gagal transfer, saldo anda tidak mencukupi.'], 400); 
         }
 
         $transaction = Transaction::create(["amount" => $amount, 'tx_type_id' => 2]);
@@ -36,7 +36,7 @@ class UserController extends Controller
         // Update Recipient Balance
         User::find($to)->balance()->increment('balance', $amount);
 
-        return response()->json(['message'=>'Success transfer','to_id'=>$to,'amount'=>$amount], 200); 
+        return response()->json(['message'=>'Sukses transfer.','to_id'=>$to,'amount'=>$amount], 200); 
     }
 
     public function request_topup(Request $request){
@@ -48,7 +48,7 @@ class UserController extends Controller
         ];
         $topup = TopUp::create($create);
         $data["balance"] = $input['request_balance'];
-        return response()->json(['message'=>'Success Request Top Up','data'=> $data], 200);
+        return response()->json(['message'=>'Sukses request top up.','data'=> $data], 200);
     }
 
     public function request_withdraw(Request $request){
@@ -61,7 +61,7 @@ class UserController extends Controller
         $currentBalance = $getBalance['balance'];
 
         if($requestBalance > $currentBalance)  {
-            return response()->json(['message'=>'Cannot withdraw, insufficient fund.', 'success' => false], 400);
+            return response()->json(['message'=>'Withdraw gagal, saldo anda tidak mencukupi.', 'success' => false], 400);
         }
 
         $create = [
@@ -72,7 +72,7 @@ class UserController extends Controller
         $withdraw = Withdraw::create($create);
         $data["balance"] = $requestBalance;
 
-        return response()->json(['message'=>'Success Request Withdraw','data'=> $data, 'success' => true], 200);
+        return response()->json(['message'=>'Sukses Request Withdraw','data'=> $data, 'success' => true], 200);
     }
     
     public function topup(Request $request){
@@ -94,7 +94,7 @@ class UserController extends Controller
             'amount'=>$amount
         ];
 
-        return response()->json(['message'=>'Success Top up','data'=> $data], 200); 
+        return response()->json(['message'=>'Sukses top up','data'=> $data], 200); 
     }
 
     /** 
@@ -110,7 +110,7 @@ class UserController extends Controller
         // print($trans->amount);
         // print($trans->transactionTypes->type);
 
-        return response()->json(['message'=>'Success get history', 'data'=> $history], 200); 
+        return response()->json(['message'=>'Sukses mengambil riwayat.', 'data'=> $history], 200); 
     }
 
     /** 
@@ -122,7 +122,7 @@ class UserController extends Controller
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             $user = Auth::user(); 
             $success['token'] =  $user->api_token;
-            return response()->json(['success' => 'Success login', 'data'=> $success], $this-> successStatus); 
+            return response()->json(['success' => 'Sukses login.', 'data'=> $success], $this-> successStatus); 
         } 
         else{ 
             return response()->json(['error'=>'Unauthorised'], 401); 
@@ -136,12 +136,22 @@ class UserController extends Controller
      */ 
     public function register(Request $request) 
     { 
+        $messages = [
+            "email.required" => "Email tidak boleh kosong",
+            "email.unique" => "Email sudah terdaftar",
+            "email.email" => "Email tidak valid",
+            "name.required" => "Nama tidak boleh kosong",
+            "password.required" => "Password tidak boleh kosong",
+            "c_password.same" => "Konfirmasi password tidak sama",
+            "c_password.required" => "Konfirmasi Password tidak boleh kosong",
+        ];
+        
         $validator = Validator::make($request->all(), [ 
             'name' => 'required', 
-            'email' => 'required|email', 
+            'email' => 'required|email|unique:users', 
             'password' => 'required', 
             'c_password' => 'required|same:password', 
-        ]);
+        ],$messages);
 
         if ($validator->fails()) { 
             return response()->json(['error'=>$validator->errors()], 401);            
@@ -149,7 +159,7 @@ class UserController extends Controller
 
         $input = $request->all(); 
         $input['password'] = bcrypt($input['password']); 
-        $input['role_id'] = $input['role_id'] || 2; // USER
+        $input['role_id'] = $input['role_id'];
         $input['api_token'] = Str::random(60);
         $user = User::create($input); 
         $success['token'] =  $user->api_token; 
@@ -159,7 +169,7 @@ class UserController extends Controller
         $balance['balance'] = 0;
         Balance::create($balance);
 
-        return response()->json(['success'=>'Success Register', 'data' => $success], $this->successStatus); 
+        return response()->json(['success'=>'Sukses register.', 'data' => $success], $this->successStatus); 
     }
 
     /** 

@@ -28,9 +28,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{{  url('register') }}">Register Admin</a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="{{  url('list') }}">List Admin</a>
-          </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="{{  url('list') }}">List User</a>
+          </li>
         </ul>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">

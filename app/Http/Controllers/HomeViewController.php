@@ -41,7 +41,7 @@ class HomeViewController extends Controller
     }
 
     public function list(){
-        $user = User::where('role_id', 1)->get();
+        $user = User::with('balance','role')->orderBy('role_id')->get();
 
         return view('list.list',['data' => $user]);
     }
